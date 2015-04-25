@@ -70,6 +70,7 @@ class TipsViewController: UIViewController {
         
         var TipPercentages = [Percentage1Value, Percentage2Value, Percentage3Value]
 //        var TipPercentages = [0.18, 0.20, 0.25]
+        // comment
         var TipPercentage = TipPercentages[TipControl.selectedSegmentIndex]
         
 // segmentedControl setTitle:<YourLocalizedString> forSegmentAtIndex:0];
