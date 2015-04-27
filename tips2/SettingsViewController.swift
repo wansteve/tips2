@@ -17,6 +17,8 @@ class SettingsViewController: UIViewController {
  
     }
   
+    @IBOutlet weak var CurrencyControl: UISegmentedControl!
+    
     @IBOutlet weak var Percentage1Field: UITextField!
   
     @IBAction func Percentage1Changed(sender: AnyObject) {
@@ -85,12 +87,22 @@ class SettingsViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         println("view will appear")
-    
+        
+        // to retain the settings value
+        var defaults = NSUserDefaults.standardUserDefaults()
+        Percentage1Field.text = defaults.objectForKey("KeyForPercentage1Title") as String
+        Percentage2Field.text = defaults.objectForKey("KeyForPercentage2Title") as String
+        Percentage3Field.text = defaults.objectForKey("KeyForPercentage3Title") as String
+        
+        CurrencyControl.selectedSegmentIndex = defaults.integerForKey("KeyForCurrency")
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         println("view did appear")
+        
+        
+        
     }
     
     
@@ -98,11 +110,21 @@ class SettingsViewController: UIViewController {
         super.viewWillDisappear(animated)
         println("view will disappear")
         
+        
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         println("view did disappear")
+ 
+        //        var TipPercentages = [0.18, 0.20, 0.25]
+        var Currencies = [0,1,2,3]
+        var Currency = Currencies[CurrencyControl.selectedSegmentIndex]
+ println("Currency selected segment index is")
+        println(CurrencyControl.selectedSegmentIndex)
+        var defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setInteger(Currency, forKey: "KeyForCurrency")
+        defaults.synchronize()
         
     }
   

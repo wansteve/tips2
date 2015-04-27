@@ -28,6 +28,8 @@ class TipsViewController: UIViewController {
         TipControl.setTitle("20%", forSegmentAtIndex: 1)
         TipControl.setTitle("22%", forSegmentAtIndex: 2)
         
+        TipControl.selectedSegmentIndex = 0
+        
         var defaults = NSUserDefaults.standardUserDefaults()
         
         defaults.setDouble(0.18, forKey: "KeyForPercentage1")
@@ -37,10 +39,26 @@ class TipsViewController: UIViewController {
         defaults.setDouble(0.22, forKey: "KeyForPercentage3")
         defaults.setObject("22", forKey: "KeyForPercentage3Title")
         
+        defaults.setInteger(0, forKey: "KeyForCurrency")
+        
         defaults.synchronize()
         
         
     }
+
+
+ /*
+      // Optionally initialize the property to a desired starting value
+self.firstView.alpha = 0
+self.secondView.alpha = 1
+UIView.animateWithDuration(0.4, animations: {
+    // This causes first view to fade in and second view to fade out
+    self.firstView.alpha = 1
+    self.secondView.alpha = 0
+})
+       */
+
+
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         println("view will appear")
@@ -48,19 +66,23 @@ class TipsViewController: UIViewController {
         var defaults = NSUserDefaults.standardUserDefaults()
         var Percentage1Value = defaults.doubleForKey("KeyForPercentage1")
         println("View will appear: Percentage 1 is set as \(Percentage1Value)")
-        
-        
+
+        BillField.becomeFirstResponder()
+
     }
 
     // viewDidAppear is the place to update all default values
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         println("view did appear")
+        // Tempout
         var defaults = NSUserDefaults.standardUserDefaults()
         var Percentage1Value = defaults.doubleForKey("KeyForPercentage1")
         var Percentage2Value = defaults.doubleForKey("KeyForPercentage2")
         var Percentage3Value = defaults.doubleForKey("KeyForPercentage3")
 
+
+        // Tempout
         var Percentage1Title = defaults.objectForKey("KeyForPercentage1Title") as String
         var Percentage1TitleA = Percentage1Title + "%"
         var Percentage2Title = defaults.objectForKey("KeyForPercentage2Title") as String
@@ -68,15 +90,31 @@ class TipsViewController: UIViewController {
         var Percentage3Title = defaults.objectForKey("KeyForPercentage3Title") as String
         var Percentage3TitleA = Percentage3Title + "%"
         
-        var TipPercentages = [Percentage1Value, Percentage2Value, Percentage3Value]
-//        var TipPercentages = [0.18, 0.20, 0.25]
+        
+        // Tempout
+var TipPercentages = [Percentage1Value, Percentage2Value, Percentage3Value]
+
+        
+       /* Tempout
+        var TipPercentages = [0.18, 0.20, 0.25]
+        println("TipPercentages are")
+        println(TipPercentages[0])
+        println(TipPercentages[1])
+        println(TipPercentages[2])
+        println(TipControl.selectedSegmentIndex)
+*/
         // comment
         var TipPercentage = TipPercentages[TipControl.selectedSegmentIndex]
+
+        // println ("milestone 1")
+        // var TipPercentage = 0.18 // temporary fix
         
 // segmentedControl setTitle:<YourLocalizedString> forSegmentAtIndex:0];
+        // Tempout
         TipControl.setTitle(Percentage1TitleA, forSegmentAtIndex: 0)
         TipControl.setTitle(Percentage2TitleA, forSegmentAtIndex: 1)
         TipControl.setTitle(Percentage3TitleA, forSegmentAtIndex: 2)
+
         
         
         var BillAmount = (BillField.text as NSString).doubleValue
@@ -85,20 +123,50 @@ class TipsViewController: UIViewController {
         var TipAmount = BillAmount * TipPercentage
         var TotalAmount = BillAmount + TipAmount
         
-        TipLabel.text = String(format: "$%.2f", TipAmount)
-        TotalLabel.text = String(format: "$%.2f", TotalAmount)
+        //TipLabel.text = String(format: "$%.2f", TipAmount)
+        //TotalLabel.text = String(format: "$%.2f", TotalAmount)
+      
+        
+        
+        var currencyFormatter: NSNumberFormatter {
+            let formatter = NSNumberFormatter()
+            formatter.numberStyle = .CurrencyStyle
+            // formatter.numberStyle = .DecimalStyle
+            
+            formatter.usesGroupingSeparator = true
+            
+            var defaults = NSUserDefaults.standardUserDefaults()
+            var i = defaults.integerForKey("KeyForCurrency")
+            
+            switch(i){
+            case 0:
+                formatter.locale = NSLocale.currentLocale()
+            case 1:
+                formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+                formatter.currencyGroupingSeparator = ","
+                formatter.groupingSize = 3;
+            case 2:
+                formatter.locale = NSLocale(localeIdentifier: "ed_GB")
+                formatter.currencyGroupingSeparator = ","
+                formatter.groupingSize = 3;
+            case 3:
+                formatter.locale = NSLocale(localeIdentifier: "es_ES")
+                formatter.currencyGroupingSeparator = "."
+                formatter.groupingSize = 3;
+            default:
+                formatter.locale = NSLocale.currentLocale()
+            }
+            return formatter
+        }
+
+        TipLabel.text = currencyFormatter.stringFromNumber(TipAmount)
+        TotalLabel.text = currencyFormatter.stringFromNumber(TotalAmount)
+
+        
         
         println("View did appear: Updated 1")
-        
-        
-        /*
-        println("View did appear: TipControlText s set as \(TipControl.t))")
-        TipControl = UISegmentedControl(items: [
-            NSLocalizedString("Aaaaaa", comment: ""),
-            NSLocalizedString("Bbbbbb", comment: ""),
-            NSLocalizedString("Cccccc", comment: ""),
-            ])
-        */
+        println("View did appear: Updated 1 TipLabel \(TipLabel.text)")
+        println("View did appear: Updated 1 TotalLabel \(TotalLabel.text)")
         
     }
 
@@ -150,9 +218,47 @@ println(BillAmount)
         var TipAmount = BillAmount * TipPercentage
         var TotalAmount = BillAmount + TipAmount
 
-        TipLabel.text = String(format: "$%.2f", TipAmount)
-        TotalLabel.text = String(format: "$%.2f", TotalAmount)
+        // TipLabel.text = String(format: "$%.2f", TipAmount)
+        // TotalLabel.text = String(format: "$%.2f", TotalAmount)
 
+        
+        var currencyFormatter: NSNumberFormatter {
+            let formatter = NSNumberFormatter()
+            formatter.numberStyle = .CurrencyStyle
+            // formatter.numberStyle = .DecimalStyle
+            
+            formatter.usesGroupingSeparator = true
+            
+            var defaults = NSUserDefaults.standardUserDefaults()
+            var i = defaults.integerForKey("KeyForCurrency")
+            
+            switch(i){
+            case 0:
+                formatter.locale = NSLocale.currentLocale()
+            case 1:
+                formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+                formatter.currencyGroupingSeparator = ","
+                formatter.groupingSize = 3;
+            case 2:
+                formatter.locale = NSLocale(localeIdentifier: "ed_GB")
+                formatter.currencyGroupingSeparator = ","
+                formatter.groupingSize = 3;
+            case 3:
+                formatter.locale = NSLocale(localeIdentifier: "es_ES")
+                formatter.currencyGroupingSeparator = "."
+                formatter.groupingSize = 3;
+            default:
+                formatter.locale = NSLocale.currentLocale()
+            }
+            return formatter
+        }
+        
+        TipLabel.text = currencyFormatter.stringFromNumber(TipAmount)
+        TotalLabel.text = currencyFormatter.stringFromNumber(TotalAmount)
+        
+        
+
+        
     }
     
     @IBAction func OnTap(sender: AnyObject) {
